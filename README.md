@@ -9,5 +9,19 @@ Moderní prezentace služby analýzy bezbariérovosti založené na datech mobil
 
 ## GitHub Pages
 
-Stránka je dostupná na: https://[your-username].github.io/[repo-name]/
+Pro nejspolehlivější sdílení (např. do Microsoft Teams) používej rootové stránky bez diakritiky v URL:
+
+- `index.html` – přehled
+- `product.html` – produktová stránka
+- `pricing.html` – ceník
+
+### Automatické nastavení repa + Pages
+
+Spusť:
+
+```powershell
+.\scripts\setup-github-pages.ps1
+```
+
+Skript tě přihlásí přes GitHub CLI, vytvoří veřejné repo `CEDA_Product_Pages`, pushne obsah a zapne GitHub Pages.
 
