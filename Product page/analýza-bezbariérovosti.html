@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analýza bezbariérovosti města - Moderní řešení založené na datech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-primary {
+            background: linear-gradient(135deg, #000050 0%, #0000B0 100%);
+        }
+        .gradient-accent {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .gradient-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .gradient-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .gradient-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .icon-bounce {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .pulse-glow {
+            animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 0, 80, 0.7); }
+            50% { opacity: .8; box-shadow: 0 0 0 10px rgba(0, 0, 80, 0); }
+        }
+        .heatmap-segment {
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Hero Section -->
+    <section class="gradient-primary text-white py-20 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="mb-6">
+                <span class="inline-block px-4 py-2 bg-white/20 rounded-full text-sm font-semibold backdrop-blur-sm">
+                    Nová služba pro města
+                </span>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                Analýza bezbariérovosti<br/>
+                <span class="text-blue-200">založená na datech</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-8">
+                Objektivní a plošná analýza bezbariérovosti veřejného prostoru pomocí mobilního laserového mapování
+            </p>
+            <div class="flex flex-wrap justify-center gap-4 mt-10">
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
+                    <div class="text-2xl font-bold">100%</div>
+                    <div class="text-sm text-blue-200">Objektivní</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
+                    <div class="text-2xl font-bold">3D</div>
+                    <div class="text-sm text-blue-200">Laserové mapování</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
+                    <div class="text-2xl font-bold">∞</div>
+                    <div class="text-sm text-blue-200">Škálovatelné</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features -->
+    <section class="py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
+                Co nabízíme
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Feature 1 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Plošná analýza</h3>
+                    <p class="text-gray-600">Lineární hodnocení podél komunikací, nejen bodově u přechodů</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="w-14 h-14 gradient-accent rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Interaktivní heatmapa</h3>
+                    <p class="text-gray-600">Vizuální mapa integrovatelná do vašeho mapového portálu</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="w-14 h-14 gradient-success rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Měřitelná data</h3>
+                    <p class="text-gray-600">Přesné výškové rozdíly obrubníků z 3D bodového mračna</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover">
+                    <div class="w-14 h-14 gradient-warning rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Rychlé zpracování</h3>
+                    <p class="text-gray-600">Automatizovaná metodika s reprodukovatelnými výsledky</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology -->
+    <section class="py-16 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
+                Jak to funguje
+            </h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                Technologický koncept založený na mobilním laserovém mapování a automatizované analýze
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <!-- Step 1 -->
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 h-full">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 gradient-primary rounded-full flex items-center justify-center text-white font-bold text-xl mr-4">
+                                1
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Mobilní mapování</h3>
+                        </div>
+                        <p class="text-gray-700 mb-4">
+                            Georeferencované bodové mračno (LAS/LAZ) z laserového skenování městského prostoru
+                        </p>
+                        <div class="bg-white/60 rounded-lg p-3 text-sm">
+                            <strong>Zdroj:</strong> Digitální technická mapa
+                        </div>
+                    </div>
+                    <div class="absolute -right-4 top-1/2 transform -translate-y-1/2 hidden md:block">
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 h-full">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 gradient-accent rounded-full flex items-center justify-center text-white font-bold text-xl mr-4">
+                                2
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Detekce obrubníků</h3>
+                        </div>
+                        <p class="text-gray-700 mb-4">
+                            Automatická identifikace horní a spodní hrany obrubníku ve 3D souřadnicích
+                        </p>
+                        <div class="bg-white/60 rounded-lg p-3 text-sm">
+                            <strong>Interpolace:</strong> Po 0,1 m
+                        </div>
+                    </div>
+                    <div class="absolute -right-4 top-1/2 transform -translate-y-1/2 hidden md:block">
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 h-full">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 gradient-success rounded-full flex items-center justify-center text-white font-bold text-xl mr-4">
+                                3
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Výpočet výšky</h3>
+                        </div>
+                        <p class="text-gray-700 mb-4">
+                            Výška obrubníku = Z(horní hrana) - Z(spodní hrana) pro každý vertex
+                        </p>
+                        <div class="bg-white/60 rounded-lg p-3 text-sm">
+                            <strong>Přesnost:</strong> 3D bodové mračno
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classification -->
+            <div class="bg-gray-50 rounded-2xl p-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Klasifikace bezbariérovosti</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Category A -->
+                    <div class="bg-white rounded-xl p-6 shadow-md">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 gradient-success rounded-xl flex items-center justify-center mr-4">
+                                <span class="text-2xl font-bold text-white">A</span>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900">Přístupné</h4>
+                                <p class="text-sm text-gray-600">0 - 2 cm</p>
+                            </div>
+                        </div>
+                        <div class="heatmap-segment gradient-success">
+                            Bezpečné pro všechny
+                        </div>
+                        <p class="text-gray-600 text-sm mt-3">
+                            Ideální pro vozíčkáře, seniory a osoby se sníženou pohyblivostí
+                        </p>
+                    </div>
+
+                    <!-- Category B -->
+                    <div class="bg-white rounded-xl p-6 shadow-md">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 gradient-warning rounded-xl flex items-center justify-center mr-4">
+                                <span class="text-2xl font-bold text-white">B</span>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900">Částečně přístupné</h4>
+                                <p class="text-sm text-gray-600">2 - 5 cm</p>
+                            </div>
+                        </div>
+                        <div class="heatmap-segment gradient-warning">
+                            Vyžaduje opatrnost
+                        </div>
+                        <p class="text-gray-600 text-sm mt-3">
+                            Možné překonání s pomocí nebo pro zkušené uživatele
+                        </p>
+                    </div>
+
+                    <!-- Category C -->
+                    <div class="bg-white rounded-xl p-6 shadow-md">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 gradient-danger rounded-xl flex items-center justify-center mr-4">
+                                <span class="text-2xl font-bold text-white">C</span>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900">Obtížně přístupné</h4>
+                                <p class="text-sm text-gray-600">> 5 cm</p>
+                            </div>
+                        </div>
+                        <div class="heatmap-segment gradient-danger">
+                            Kritické místo
+                        </div>
+                        <p class="text-gray-600 text-sm mt-3">
+                            Vyžaduje rekonstrukci pro bezbariérový přístup
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coverage -->
+    <section class="py-16 px-4 bg-gradient-to-br from-gray-50 to-gray-100">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
+                Rozsah pokrytí
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Crossings -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mr-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Přechody</h3>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Oficiální přechody pro chodce</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Náběhy přechodů</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Napojení chodníků</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Potenciální místa přecházení</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Sections -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg">
+                    <div class="flex items-center mb-6">
+                        <div class="w-14 h-14 gradient-accent rounded-xl flex items-center justify-center mr-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">Úseky komunikací</h3>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Chodníky podél silnic</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Kontinuální hodnocení obrubníku</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Lineární segmenty s atributy</span>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-3 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Agregace po úsecích</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Stories -->
+    <section class="py-16 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
+                Pro koho je služba určena
+            </h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                Řešení, které pomáhá občanům i městům
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- User Story 1 -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 shadow-lg">
+                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Vozíčkář</h3>
+                    <p class="text-gray-700 text-sm mb-3">
+                        "Chci vidět úseky města, kde mohu bezpečně překonat komunikaci."
+                    </p>
+                    <div class="bg-white/60 rounded-lg p-2 text-xs text-gray-600">
+                        ✓ Identifikace bezbariérových tras
+                    </div>
+                </div>
+
+                <!-- User Story 2 -->
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 shadow-lg">
+                    <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Senior</h3>
+                    <p class="text-gray-700 text-sm mb-3">
+                        "Chci vědět, kde jsou problematická místa pro můj pohyb."
+                    </p>
+                    <div class="bg-white/60 rounded-lg p-2 text-xs text-gray-600">
+                        ✓ Přehled kritických míst
+                    </div>
+                </div>
+
+                <!-- User Story 3 -->
+                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 shadow-lg">
+                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Město</h3>
+                    <p class="text-gray-700 text-sm mb-3">
+                        "Chci mít přehled o skutečné bezbariérovosti a prioritizovat investice."
+                    </p>
+                    <div class="bg-white/60 rounded-lg p-2 text-xs text-gray-600">
+                        ✓ Datově podložené rozhodování
+                    </div>
+                </div>
+
+                <!-- User Story 4 -->
+                <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 shadow-lg">
+                    <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Technický správce</h3>
+                    <p class="text-gray-700 text-sm mb-3">
+                        "Chci data, která mohu snadno aktualizovat po rekonstrukci."
+                    </p>
+                    <div class="bg-white/60 rounded-lg p-2 text-xs text-gray-600">
+                        ✓ Aktualizovatelná databáze
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section class="py-16 px-4 gradient-primary text-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+                Přínosy řešení
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h3 class="text-xl font-bold mb-2">Objektivní</h3>
+                    <p class="text-blue-100 text-sm">Měřitelná bezbariérovost založená na reálných datech</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                    <div class="text-4xl mb-4">♻️</div>
+                    <h3 class="text-xl font-bold mb-2">Využití dat</h3>
+                    <p class="text-blue-100 text-sm">Využití již existujících naměřených dat z DTM</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                    <div class="text-4xl mb-4">📈</div>
+                    <h3 class="text-xl font-bold mb-2">Škálovatelné</h3>
+                    <p class="text-blue-100 text-sm">Reprodukovatelný proces pro jakékoli město</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+                    <div class="text-4xl mb-4">🏙️</div>
+                    <h3 class="text-xl font-bold mb-2">Smart City</h3>
+                    <p class="text-blue-100 text-sm">Silný argument pro moderní přístup k městskému plánování</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Output Example -->
+    <section class="py-16 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
+                Výstup: Interaktivní heatmapa
+            </h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                Přehledná a intuitivní mapa s barevným rozlišením pro širokou veřejnost
+            </p>
+
+            <div class="bg-gray-50 rounded-2xl p-8 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Vlastnosti heatmapy</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-700">Lineární segmenty s atributem bezbariérovosti</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-700">Barevné kódování podle kategorie (A/B/C)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-700">Agregace po úsecích</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-green-500 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-700">Integrovatelná do vlastního mapového portálu</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Využití</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-blue-500 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-700">Identifikace bezbariérových míst ve městě</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-blue-500 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-700">Identifikace kritických míst</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-blue-500 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-700">Podpora pro trasování bezbariérových tras</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-blue-500 mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-gray-700">Přehledná mapa pro širokou veřejnost</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heatmap Legend -->
+            <div class="bg-white rounded-xl p-6 shadow-lg border-2 border-gray-200">
+                <h3 class="text-lg font-bold text-gray-900 mb-4 text-center">Legenda heatmapy</h3>
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                    <div class="flex items-center">
+                        <div class="w-24 h-8 gradient-success rounded mr-3"></div>
+                        <span class="text-sm font-medium text-gray-700">Kategorie A (0-2 cm)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-24 h-8 gradient-warning rounded mr-3"></div>
+                        <span class="text-sm font-medium text-gray-700">Kategorie B (2-5 cm)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-24 h-8 gradient-danger rounded mr-3"></div>
+                        <span class="text-sm font-medium text-gray-700">Kategorie C (>5 cm)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 px-4 bg-gradient-to-r from-gray-900 to-gray-800 text-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                Připraveni začít?
+            </h2>
+            <p class="text-xl text-gray-300 mb-8">
+                Kontaktujte nás pro více informací o analýze bezbariérovosti vašeho města
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <button class="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    Získat cenovou nabídku
+                </button>
+                <button class="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
+                    Zobrazit ukázku
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-sm">Analýza bezbariérovosti města • Moderní řešení založené na datech</p>
+        </div>
+    </footer>
+</body>
+</html>
+
